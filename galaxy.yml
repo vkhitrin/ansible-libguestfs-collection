@@ -1,0 +1,18 @@
+namespace: vkhitrin
+name: libguestfs
+version: 1.0.8
+readme: README.md
+authors:
+  - Vadim Khitrin <me@vkhitrin>
+description: libguestfs Ansible modules
+license_file: COPYING.md
+tags:
+  - libguestfs
+dependencies: {}
+repository: https://github.com/vkhitrin/ansible-libguestfs-collection
+documentation: https://github.com/vkhitrin/ansible-libguestfs-collection/tree/main/docs
+homepage: https://github.com/vkhitrin/ansible-libguestfs-collection
+issues: https://github.com/vkhitrin/ansible-libguestfs-collection/issues?q=is%3Aissue+is%3Aopen
+build_ignore:
+  - "*.tar.gz"
+  - ".gitignore"
