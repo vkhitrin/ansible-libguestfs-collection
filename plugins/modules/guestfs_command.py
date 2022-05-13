@@ -25,11 +25,11 @@ options:
     description: List of commands to run directly from binaries, shell and command are mutually exclusive
   automount:
     required: False
-    description: Whether to perform auto mount of mountpoints inside guest disk image (REQUIRED for this module)
+    description: Whether to perform auto mount of mountpoints inside guest disk image
     default: True
   mounts:
     required: False
-    description: List of mounts that will be attempted. Each element is a dictionary {'/path/to/device': '/path/to/mountpoint'}
+    description: "List of mounts that will be attempted. Each element is a dictionary {'/path/to/device': '/path/to/mountpoint'}"
   network:
     required: False
     description: Whether to enable network for appliance

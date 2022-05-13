@@ -31,11 +31,11 @@ options:
     - absent
   automount:
     required: False
-    description: Whether to perform auto mount of mountpoints inside guest disk image (REQUIRED for this module)
+    description: Whether to perform auto mount of mountpoints inside guest disk image
     default: True
   mounts:
     required: False
-    description: List of mounts that will be attempted. Each element is a dictionary {'/path/to/device': '/path/to/mountpoint'}
+    description: "List of mounts that will be attempted. Each element is a dictionary {'/path/to/device': '/path/to/mountpoint'}"
   selinux_relabel:
     required: False
     description: Whether to perform SELinux context relabeling
