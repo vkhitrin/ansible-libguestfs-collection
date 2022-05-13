@@ -17,6 +17,7 @@ except ImportError:
 
 from collections import OrderedDict
 
+
 class guest():
     def __init__(self, module):
         self.mount = False

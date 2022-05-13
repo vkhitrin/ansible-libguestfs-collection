@@ -94,7 +94,7 @@ md5:
 """
 
 from ansible.module_utils.basic import AnsibleModule
-from ..module_utils.libguestfs.libguestfs import guest
+from ..module_utils.libguestfs import guest
 
 import os
 
