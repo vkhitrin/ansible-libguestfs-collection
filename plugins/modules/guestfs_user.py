@@ -33,6 +33,9 @@ options:
     required: False
     description: Whether to perform auto mount of mountpoints inside guest disk image (REQUIRED for this module)
     default: True
+  mounts:
+    required: False
+    description: List of mounts that will be attempted. Each element is a dictionary {'/path/to/device': '/path/to/mountpoint'}
   selinux_relabel:
     required: False
     description: Whether to perform SELinux context relabeling
@@ -152,6 +155,7 @@ def main():
         argument_spec=dict(
             image=dict(required=True, type='str'),
             automount=dict(required=False, type='bool', default=True),
+            mounts=dict(required=False,  type='list', elements='dict'),
             network=dict(required=False, type='bool', default=True),
             selinux_relabel=dict(required=False, type='bool', default=False),
             name=dict(required=True, type='str'),

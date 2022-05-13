@@ -31,8 +31,11 @@ options:
     description: String to match when querying installed packages, to display all insert '*', name and list are mutually exclusive
   automount:
     required: False
-    description: Whether to perform auto mount of mountpoints inside guest disk image (REQUIRED for this module)
+    description: Whether to perform auto mount of mountpoints inside guest disk image
     default: True
+  mounts:
+    required: False
+    description: List of mounts that will be attempted. Each element is a dictionary {'/path/to/device': '/path/to/mountpoint'}
   network:
     required: False
     description: Whether to enable network for appliance
@@ -238,6 +241,7 @@ def main():
         argument_spec=dict(
             image=dict(required=True, type='str'),
             automount=dict(required=False, type='bool', default=True),
+            mounts=dict(required=False,  type='list', elements='dict'),
             network=dict(required=False, type='bool', default=True),
             selinux_relabel=dict(required=False, type='bool', default=False),
             name=dict(required=False, type='list'),

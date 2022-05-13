@@ -22,6 +22,7 @@ class guest():
     def __init__(self, module):
         self.mount = False
         self.automount = False
+        self.mounts = False
         self.module = module
         self.handle = None
         self.network = False
@@ -32,45 +33,63 @@ class guest():
             results['msg'] = "libguestfs Python bindings are required for this module"
             self.module.fail_json(**results)
 
+    def mount_device(self, device, mountpoint):
+        return self.handle.mount(device, mountpoint)
+
     def bootstrap(self):
         results = {}
         ansible_module_params = self.module.params
         self.image = ansible_module_params.get('image')
         self.automount = ansible_module_params.get('automount')
+        self.mounts = ansible_module_params.get('mounts')
         self.network = ansible_module_params.get('network')
+        if self.mounts and self.automount:
+            results['msg'] = 'Automount (enabled by default) and manual mounts were requested by module, please disable automount if providing manual mounts'
+            self.module.fail_json(**results)
         if os.path.exists(self.image) is False:
             results['msg'] = 'Could not find image'
             self.module.fail_json(**results)
-        g = guestfs.GuestFS(python_return_dict=True)
-        g.add_drive_opts(self.image, readonly=0)
+        self.handle = guestfs.GuestFS(python_return_dict=True)
+        self.handle.add_drive_opts(self.image, readonly=0)
         if self.network:
-            g.set_network(True)
+            self.handle.set_network(True)
         try:
-            g.launch()
+            self.handle.launch()
         except Exception as e:
-            results['msg'] = 'Could not mount guest disk image, python exception:\n    {}'.format(str(e))
+            results['msg'] = 'Could not mount guest disk image, python exception: {}'.format(str(e))
             self.module.fail_json(**results)
+        roots = self.handle.inspect_os()
         if self.automount:
-            roots = g.inspect_os()
             if len(roots) == 0:
                 results['msg'] = 'Automount failed, no devices were found in guest disk image, consider attempting manual mount'
                 self.module.fail_json(**results)
             for root in roots:
-                mps = g.inspect_get_mountpoints(root)
-                # Sort mountpoints alphabetically, this is probably the most common approach that will work for most images
-                mps = OrderedDict(mps)
-                for mountpoint, device in mps.items():
-                    try:
-                        g.mount(device, mountpoint)
-                    except RuntimeError as e:
-                        results['msg'] = "Couldn't mount device inside guest disk image, python exception:\n    {}".format(str(e))
-                        self.module.fail_json(**results)
-                self.mount = True
-        # TODO (vkhitrin): Implement an option to supply manual mounts when not using automount
+                mps = self.handle.inspect_get_mountpoints(root)
+                # Filter the mountpoint mapped to root device, do not attempt to mount partitions
+                filtered_mounts = list(filter(lambda m: mps[m] == root, mps))
+                if not filtered_mounts:
+                    results['msg'] = 'Failed to detect associated mountpoint for device {}.'.format(str(root))
+                    self.module.fail_json(**results)
+                try:
+                    self.mount_device(root, filtered_mounts[0])
+                except RuntimeError as e:
+                    results['msg'] = "Couldn't mount device inside guest disk image, python exception: {}".format(str(e))
+                    self.module.fail_json(**results)
         else:
-            results['msg'] = "automount is false, can't proceed with this module"
-            self.module.fail_json(**results)
-        self.handle = g
+            if not self.mounts:
+                results['msg'] = "Automount is disabled and no mountpoints were provided to module"
+                self.module.fail_json(**results)
+            for mount_request in self.mounts:
+                if len(mount_request.keys()) > 1:
+                    results['msg'] = "Dictionary '{}' is expected to have a single key".format(mount_request)
+                    self.module.fail_json(**results)
+                device, mountpoint = mount_request.popitem()
+                try:
+                    self.mount_device(device, mountpoint)
+                except RuntimeError as e:
+                    results['msg'] = "Couldn't mount device inside guest disk image, python exception: {}".format(str(e))
+                    self.module.fail_json(**results)
+        self.mount = True
         return self.handle
 
     def close(self):
