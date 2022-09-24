@@ -1,6 +1,6 @@
 namespace: vkhitrin
 name: libguestfs
-version: 1.1.1
+version: 1.1.2
 readme: README.md
 authors:
   - Vadim Khitrin <me@vkhitrin>
