@@ -12,16 +12,47 @@ Full documentation(ansible-doc) is present inside the module.
 | guestfs_copy_out         | Fetch files                | [doc](/plugins/modules/guestfs_download.py)     |
 | guestfs_copy_in          | Upload files               | [doc](/plugins/modules/guestfs_upload.py)       |
 
-## Sample Play
+## Sample Plays
 
-Assumes you have everything installed (mentioned in [repo's README Prerequisites](/README.md#Prerequisites)).
+Make sure everything is installed (mentioned in [README Prerequisites](/README.md#Prerequisites)) on the Ansible controller host.  
+All plays by default will run on `localhost` unless overridden by `hosts_pattern` variable.  
 
-### Install package on image located on localhost:
+### Execute command
 
-Download a CentOS cloud image to /tmp:
+[install_packages.yml](docs/samples/install_packages.yml)
 
-`curl https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1809.qcow2 -o /tmp/CentOS-7-x86_64-GenericCloud-1809.qcow2`
+Downloads CentOS image and executes `df -h`.
 
-Run playbook on localhost:
+`ansible-playbook docs/samples/execute_commands.yml -i docs/samples/hosts`
 
-`ansible-playbook docs/samples/main.yml -i hosts`
+### Install Packages
+
+[install_packages.yml](docs/samples/install_packages.yml)
+
+Downloads CentOS image and installs `vim`.
+
+`ansible-playbook docs/samples/install_packages.yml -i docs/samples/hosts`
+
+### Modify Usesrs
+
+[modify_users.yml](docs/samples/modify_users.yml)
+
+Downloads CentOS image and modifies root user's password to `changeme`.
+
+`ansible-playbook docs/samples/modify_users.yml -i docs/samples/hosts`
+
+### Fetch File
+
+[copy_out.yml](docs/samples/copy_out.yml)
+
+Downloads CentOS image and copies `/etc/hosts` from the image.
+
+`ansible-playbook docs/samples/copy_out.yml -i docs/samples/hosts`
+
+### Upload File
+
+[copy_in.yml](docs/samples/copy_in.yml)
+
+Downloads CentOS image and copies `/etc/hosts` from host to the image.
+
+`ansible-playbook docs/samples/copy_in.yml -i docs/samples/hosts`
