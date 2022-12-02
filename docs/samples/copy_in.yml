@@ -1,0 +1,12 @@
+- hosts: "{{ hosts_pattern | default('localhost') }}"
+  become: yes
+  tasks:
+    - name: Download CentOS Image
+      ansible.builtin.get_url:
+        url: https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1809.qcow2
+        dest: /tmp
+    - name: Modify CentOS Image - Upload File
+      vkhitrin.libguestfs.guestfs_copy_in:
+        image: '/tmp/CentOS-7-x86_64-GenericCloud-1809.qcow2'
+        src: '/etc/hosts'
+        dest: '/tmp/hypervisor_hosts'
