@@ -1,4 +1,4 @@
-#!/usr/vin/env python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # Copyright: (c) 2018, Vadim Khitrin <me at vkhitrin.com>
@@ -14,8 +14,6 @@ try:
     HAS_GUESTFS = True
 except ImportError:
     HAS_GUESTFS = False
-
-from collections import OrderedDict
 
 
 class guest():
@@ -44,7 +42,10 @@ class guest():
         self.mounts = ansible_module_params.get('mounts')
         self.network = ansible_module_params.get('network')
         if self.mounts and self.automount:
-            results['msg'] = 'Automount (enabled by default) and manual mounts were requested by module, please disable automount if providing manual mounts'
+            results['msg'] = ('Automount (enabled by default) and manual '
+                              ' mounts were requested by module, please '
+                              'disable automount if providing manual '
+                              'mounts')
             self.module.fail_json(**results)
         if os.path.exists(self.image) is False:
             results['msg'] = 'Could not find image'
@@ -61,11 +62,14 @@ class guest():
         roots = self.handle.inspect_os()
         if self.automount:
             if len(roots) == 0:
-                results['msg'] = 'Automount failed, no devices were found in guest disk image, consider attempting manual mount'
+                results['msg'] = ('Automount failed, no devices were found in'
+                                  ' guest disk image, consider attempting '
+                                  'manual mount')
                 self.module.fail_json(**results)
             for root in roots:
                 mps = self.handle.inspect_get_mountpoints(root)
-                # Filter the mountpoint mapped to root device, do not attempt to mount partitions
+                # Filter the mountpoint mapped to root device,
+                # do not attempt to mount partitions
                 filtered_mounts = list(filter(lambda m: mps[m] == root, mps))
                 if not filtered_mounts:
                     results['msg'] = 'Failed to detect associated mountpoint for device {}.'.format(str(root))
@@ -73,7 +77,9 @@ class guest():
                 try:
                     self.mount_device(root, filtered_mounts[0])
                 except RuntimeError as e:
-                    results['msg'] = "Couldn't mount device inside guest disk image, python exception: {}".format(str(e))
+                    results['msg'] = ("Couldn't mount device inside guest disk"
+                                      "'image, python exception: {}"
+                                      .format(str(e)))
                     self.module.fail_json(**results)
         else:
             if not self.mounts:
@@ -87,7 +93,9 @@ class guest():
                 try:
                     self.mount_device(device, mountpoint)
                 except RuntimeError as e:
-                    results['msg'] = "Couldn't mount device inside guest disk image, python exception: {}".format(str(e))
+                    results['msg'] = ("Couldn't mount device inside guest "
+                                      "disk image, python exception: {}"
+                                      .format(str(e)))
                     self.module.fail_json(**results)
         self.mount = True
         return self.handle
@@ -112,7 +120,8 @@ class guest():
                     else:
                         self.handle.touch("/.autorelabel")
                 self.handle.umount_all()
-            # Backwards compatibility, autosync is enabled by default since libguestfs 1.5.24
+            # Backwards compatibility,
+            # autosync is enabled by default since libguestfs 1.5.24
             self.handle.sync()
             # Shut off appliance before closing handle
             self.handle.shutdown()
