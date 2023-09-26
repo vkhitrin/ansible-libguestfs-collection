@@ -1,2 +1,1 @@
 localhost ansible_connection=local
-panther02 ansible_host=panther02.lab.eng.tlv2.redhat.com
