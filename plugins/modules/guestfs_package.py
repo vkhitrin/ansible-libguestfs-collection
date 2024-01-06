@@ -129,7 +129,7 @@ import re
 PACKAGE_MANAGERS = {
     'dnf': {'present': 'dnf -y install', 'absent': 'dnf -y remove'},
     'yum': {'present': 'yum -y install', 'absent': 'yum -y remove'},
-    'apt': {'present': 'apt-get -y install', 'absent': 'apt-get -y remove'}
+    'apt': {'present': 'apt-get -q -y -o Dpkg::Options::=--force-confnew update; apt-get -y install', 'absent': 'apt-get -y remove'}
 }
 
 
