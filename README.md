@@ -34,8 +34,7 @@ On Ansible Host:
 |       Distro       | Supported |                                                           Notes                                                            |
 | :----------------: | :-------- | :------------------------------------------------------------------------------------------------------------------------: |
 | Fedora/CentOS/RHEL | Yes       |                                                                                                                            |
-|       Ubuntu       | Yes       |                                                                                                                            |
-|       Debian       | Yes       |                                                                                                                            |
+|   Ubuntu/Debian    | Yes       |                                                                                                                            |
 |      Windows       | No        | [Not Supported, no plans to support right now](https://listman.redhat.com/archives/libguestfs/2016-February/msg00145.html) |
 
 ## Documentation
