@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 # Copyright: (c) 202r, Vadim Khitrin <me at vkhitrin.com>
